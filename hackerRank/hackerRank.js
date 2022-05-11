@@ -69,7 +69,7 @@ browserPromise.then(function(browserPromise){
     //     let clickSelector = document.querySelector('input[value="warmup"]');
     //     clickSelector.click();
     //     let allDivs = document.querySelectorAll(".filter-group");
-    //     let div = allDivs[3];
+    //     let div = allDivs[3]; 
     //     let clickSelector = div.querySelector(".ui-checklist-list-item input");
     //     clickSelector.click();
     //     return;
@@ -92,6 +92,13 @@ browserPromise.then(function(browserPromise){
 }).then(function(qlink){
     // console.log(qlink);
     let qsolve = questionSolver(qlink[0],code.answers[0]);
+    for(let i=1;i<qlink.length;i++)
+    {
+        console.log("page running"+i);
+        qsolve.then(function(){
+            return questionSolver(qlink(i),code.answers[i]);
+        })
+    }
     return qsolve;
 })
 
@@ -142,6 +149,8 @@ function questionSolver(link,answer)
         }).then(function(){
             return page.keyboard.press("V");
         }).then(function(){
+            return page.keyboard.up("Control");
+        }).then(function(){
             console.log("paste completed");
             let submit = page.evaluate(function(){
                 let buttons = document.querySelectorAll(".hr-monaco-editor-wrapper button");
@@ -151,6 +160,7 @@ function questionSolver(link,answer)
             return submit;
         }).then(function(){
             console.log("code submited");
+            return page.goBack();
         })
 
     });
